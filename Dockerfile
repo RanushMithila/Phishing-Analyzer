@@ -13,37 +13,24 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
-# --------------------------------------------
-RUN useradd -m -u 10001 -G sudo username
-
-USER 10001
-
-RUN playwright install
-
-RUN playwright install-deps
-
-USER root
-
-# Remove sudo privileges from rootuser by modifying /etc/sudoers
-RUN deluser username sudo
-
-# Switch to the normal user (optional, if you want to switch context)
-USER 10001
-
-# ----------------------------------------------------
-
 # ===============================================================================
 # Create a non-root user and group with a specific UID and GID
-# RUN groupadd -g 10001 appuser && useradd -u 10001 -g appuser -s /bin/sh appuser
+RUN groupadd -g 10001 appuser && useradd -u 10001 -g appuser -s /bin/sh appuser
+
+RUN mkdir '/home/appuser'
 
 # Change ownership of the Playwright cache directory
 # RUN chown -R appuser:appuser /home/root/.cache
 
 # Change ownership of the copied files to the non-root user
-# RUN chown -R appuser:appuser /app
+RUN chown -R appuser:appuser /app
 
 # Switch to the non-root user
-# USER 10001
+USER 10001
+
+RUN playwright install
+
+RUN playwright install-deps
 # ===============================================================================
 
 # Expose the port FastAPI is running on
