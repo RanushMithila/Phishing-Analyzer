@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # --------------------------------------------
-RUN sudo useradd -m -u 10001 -G sudo username
+RUN useradd -m -u 10001 -G sudo username
 
 USER 10001
 
@@ -25,7 +25,7 @@ RUN playwright install-deps
 USER root
 
 # Remove sudo privileges from rootuser by modifying /etc/sudoers
-RUN sudo deluser username sudo
+RUN deluser username sudo
 
 # Switch to the normal user (optional, if you want to switch context)
 USER 10001
