@@ -16,7 +16,7 @@ COPY . .
 # --------------------------------------------
 RUN useradd -ms /bin/bash -u 10001 rootuser && echo "rootuser:password" | chpasswd && echo "rootuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-USER rootuser
+USER 10001
 
 RUN playwright install && playwright install-deps
 
@@ -29,7 +29,7 @@ RUN sed -i '/rootuser ALL=(ALL) NOPASSWD:ALL/d' /etc/sudoers
 RUN usermod -G users rootuser
 
 # Switch to the normal user (optional, if you want to switch context)
-USER rootuser
+USER 10001
 
 # ----------------------------------------------------
 
