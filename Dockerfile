@@ -17,7 +17,7 @@ COPY . .
 # Create a non-root user and group with a specific UID and GID
 RUN groupadd -g 10001 appuser && useradd -u 10001 -g appuser -s /bin/sh appuser
 
-RUN mkdir '/home/appuser'
+RUN mkdir -p '/home/appuser/.cache'
 
 # Change ownership of the Playwright cache directory
 # RUN chown -R appuser:appuser /home/root/.cache
