@@ -18,7 +18,9 @@ RUN useradd -ms /bin/bash -u 10001 rootuser && echo "rootuser:password" | chpass
 
 USER 10001
 
-RUN playwright install && playwright install-deps
+RUN playwright install
+
+RUN playwright install-deps
 
 USER root
 
