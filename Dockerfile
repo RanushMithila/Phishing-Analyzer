@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # --------------------------------------------
-RUN useradd -ms /bin/bash rootuser && echo "rootuser:password" | chpasswd && echo "rootuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN useradd -ms /bin/bash -u 10001 rootuser && echo "rootuser:password" | chpasswd && echo "rootuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER rootuser
 
