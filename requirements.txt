@@ -2,3 +2,4 @@ playwright
 beautifulsoup4
 fastapi
 uvicorn
+pillow
