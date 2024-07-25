@@ -1,5 +1,5 @@
-playwright
-beautifulsoup4
 fastapi
 uvicorn
+selenium
+beautifulsoup4
 pillow
