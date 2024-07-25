@@ -5,9 +5,9 @@ from pydantic import BaseModel
 from typing import List
 from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
-import base64
 import time
-from fastapi.openapi.utils import get_openapi
+
+from PIL import Image
 
 import subprocess
 import os
@@ -15,13 +15,12 @@ import os
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-output = subprocess.run(["playwright", "install"])
-print("Output: ",output.stdout)
-
-output = subprocess.run(["playwright", "install-deps"])
-print("Output: ",output.stdout)
-
-os.makedirs("static", exist_ok = True) 
+@app.on_event("startup")
+async def startup_event():
+    # Install playwright and dependencies
+    subprocess.run(["playwright", "install"])
+    subprocess.run(["playwright", "install-deps"])
+    os.makedirs("static", exist_ok=True)
 
 class URLItem(BaseModel):
     url: str
@@ -37,6 +36,23 @@ def extract_content(html_content):
 
 async def take_screenshot(page, screenshot_path):
     await page.screenshot(path=screenshot_path)
+    
+def image_resize(url, percentage=40):
+    # Open an image file
+    with Image.open(url) as img:
+        # Print the original size of the image
+        print("Original size:", img.size)
+        
+        # Resize the image
+        new_size = (int(img.width * percentage / 100), int(img.height * percentage / 100))
+        # new_size = (800, 600)  # New size as a tuple (width, height)
+        img_resized = img.resize(new_size)
+        
+        # Save the resized image
+        img_resized.save(url)
+
+        # Print the new size of the image
+        print("Resized size:", img_resized.size)
 
 @app.post("/scrape/")
 async def scrape(url_item: URLItem):
@@ -58,6 +74,7 @@ async def scrape(url_item: URLItem):
         # Take a screenshot of the webpage
         await take_screenshot(page, screenshot_path)
         await browser.close()
+    image_resize(screenshot_path)
     
     return {
         "html_content": html_content,
