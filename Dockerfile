@@ -31,12 +31,21 @@ RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RE
     wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
     unzip /tmp/chromedriver.zip chromedriver -d /usr/bin/
 
+# Create a non-root user
+RUN useradd -m -u 10014 appuser
+
 # Install Python dependencies
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # Copy the application code
 COPY . /app
+
+# Change ownership of the application directory
+RUN chown -R appuser:appuser /app
+
+# Switch to the non-root user
+USER appuser
 
 # Set the working directory
 WORKDIR /app
