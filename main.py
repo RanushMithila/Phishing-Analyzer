@@ -10,15 +10,18 @@ import time
 from fastapi.openapi.utils import get_openapi
 
 import subprocess
+import os
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("static", StaticFiles(directory="static"), name="static")
 
 output = subprocess.run(["playwright", "install"])
 print("Output: ",output.stdout)
 
 output = subprocess.run(["playwright", "install-deps"])
 print("Output: ",output.stdout)
+
+os.makedirs("static", exist_ok = True) 
 
 class URLItem(BaseModel):
     url: str
