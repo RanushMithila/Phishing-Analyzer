@@ -13,7 +13,7 @@ import subprocess
 import os
 
 app = FastAPI()
-app.mount("static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 output = subprocess.run(["playwright", "install"])
 print("Output: ",output.stdout)
