@@ -4,3 +4,4 @@ gpt/
 .env
 Dockerfile-old
 static
+Dockerfile
