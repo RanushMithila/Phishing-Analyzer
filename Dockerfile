@@ -45,7 +45,7 @@ COPY . /app
 RUN chown -R appuser:appuser /app
 
 # Switch to the non-root user
-USER appuser
+USER 10014
 
 # Set the working directory
 WORKDIR /app
