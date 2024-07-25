@@ -12,7 +12,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-KEY = os.getenv("BASE_URL")
+KEY = os.getenv("OPENAI_KEY")
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
