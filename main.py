@@ -11,6 +11,8 @@ import requests
 import os
 from dotenv import load_dotenv
 
+import firebaseUpload
+
 load_dotenv()
 KEY = os.getenv("OPENAI_KEY")
 
@@ -137,11 +139,27 @@ async def scrape(url_item: URLItem, request: Request):
         await take_screenshot(page, screenshot_path)
         await browser.close()
         image_resize(screenshot_path, 40)
-        scheme = request.url.scheme  # http or https
-        host = request.url.hostname  # example.com
-        port = request.url.port
-        screenshot_path = f"{scheme}://{host}:{port}/{screenshot_path}"
-        gpt_output = gpt(url, html_content, text_content, screenshot_path)
+        # scheme = request.url.scheme  # http or https
+        # host = request.url.hostname  # example.com
+        # port = request.url.port
+        # screenshot_path = f"{scheme}://{host}:{port}/{screenshot_path}"
+        
+        image_path = screenshot_path
+        destination_blob_name = screenshot_path
+        doc_id = str(time.time())
+
+        # # Upload the image and get its URL
+        image_url = firebaseUpload.upload_image_and_get_url(image_path, destination_blob_name)
+
+        # # Check if the URL was successfully retrieved before saving to Firestore
+        if image_url:
+        #     # Save the image URL to Firestore
+            firebaseUpload.save_image_url_to_firestore(doc_id, image_url)
+            print(f"Image URL saved to Firestore: {image_url}")
+        else:
+            print("Failed to upload image or retrieve URL.")
+        # gpt_output = image_url
+        gpt_output = gpt(url, html_content, text_content, image_url)
     
     return {
         "gpt_response": gpt_output,

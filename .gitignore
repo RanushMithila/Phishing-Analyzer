@@ -4,3 +4,6 @@ gpt/
 .env
 Dockerfile-old
 static
+test/
+serviceAccountKey.json
+*.tar

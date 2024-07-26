@@ -4,3 +4,4 @@ fastapi
 uvicorn
 pillow
 requests
+firebase-admin
