@@ -7,3 +7,4 @@ static
 test/
 serviceAccountKey.json
 *.tar
+*.csv
