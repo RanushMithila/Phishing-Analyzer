@@ -129,7 +129,7 @@ async def scrape(url_item: URLItem, request: Request):
         try:
             await page.goto(url)
         except:
-            return {"Error": "Page is not working"}
+            return {"Error": "Failed to load the page"}, 500
         
         # Wait until the page is fully loaded
         await page.wait_for_selector('body')
@@ -138,7 +138,7 @@ async def scrape(url_item: URLItem, request: Request):
         html_content = await page.content()
         html_content, text_content = extract_content(html_content)
         if text_content == "":
-            return {"Error": "Return Empty text"}
+            return {"Error": "Empty text content"}, 400
         
         # Take a screenshot of the webpage
         await take_screenshot(page, screenshot_path)
