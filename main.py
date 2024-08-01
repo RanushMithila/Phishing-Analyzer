@@ -126,7 +126,10 @@ async def scrape(url_item: URLItem, request: Request):
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
-        await page.goto(url)
+        try:
+            await page.goto(url)
+        except:
+            return {"Error": "Page is not working"}
         
         # Wait until the page is fully loaded
         await page.wait_for_selector('body')
@@ -134,6 +137,8 @@ async def scrape(url_item: URLItem, request: Request):
         # Extract HTML content and text without HTML tags
         html_content = await page.content()
         html_content, text_content = extract_content(html_content)
+        if text_content == "":
+            return {"Error": "Return Empty text"}
         
         # Take a screenshot of the webpage
         await take_screenshot(page, screenshot_path)
