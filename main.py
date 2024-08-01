@@ -132,18 +132,27 @@ async def scrape(url_item: URLItem, request: Request):
             return {"Error": "Failed to load the page"}, 500
         
         # Wait until the page is fully loaded
-        await page.wait_for_selector('body')
+        try:
+            await page.wait_for_selector('body')
+        except Exception as e:
+            return {"Error": f"Failed to find body selector: {str(e)}"}, 500
         
         # Extract HTML content and text without HTML tags
-        html_content = await page.content()
-        html_content, text_content = extract_content(html_content)
-        if text_content == "":
-            return {"Error": "Empty text content"}, 400
+        try:
+            html_content = await page.content()
+            html_content, text_content = extract_content(html_content)
+            if text_content == "":
+                return {"Error": "Empty text content"}, 400
+        except Exception as e:
+            return {"Error": f"Failed to extract content: {str(e)}"}, 500
         
         # Take a screenshot of the webpage
         await take_screenshot(page, screenshot_path)
         await browser.close()
-        image_resize(screenshot_path, 40)
+        try:
+            image_resize(screenshot_path, 40)
+        except Exception as e:
+            return {"Error": f"Failed to resize image: {str(e)}"}, 500
         # scheme = request.url.scheme  # http or https
         # host = request.url.hostname  # example.com
         # port = request.url.port
@@ -163,8 +172,12 @@ async def scrape(url_item: URLItem, request: Request):
             print(f"Image URL saved to Firestore: {image_url}")
         else:
             print("Failed to upload image or retrieve URL.")
+            return {"Error": "Failed to upload image or retrieve URL."}, 500
         # gpt_output = image_url
-        gpt_output = gpt(url, html_content, text_content, image_url)
+        try:
+            gpt_output = gpt(url, html_content, text_content, image_url)
+        except Exception as e:
+            return {"Error": f"Failed to generate GPT output: {str(e)}"}, 500
     
     return {
         "gpt_response": gpt_output,
