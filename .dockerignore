@@ -7,3 +7,4 @@ gpt/
 *.tar
 stats.py
 *.csv
+*.ipynb

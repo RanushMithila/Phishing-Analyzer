@@ -8,3 +8,4 @@ test/
 serviceAccountKey.json
 *.tar
 *.csv
+*.ipynb

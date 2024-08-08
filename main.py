@@ -65,7 +65,6 @@ def gpt(url, html, text, image):
             suspicious_domain: boolean (whether the domain name
             is suspected to be not legitimate)
             Limitations:
-            The HTML may be shortened and simplified.
             The OCR-extracted text may not always be accurate.
             Examples of social engineering techniques:
             Alerting the user to a problem with their account
@@ -75,7 +74,7 @@ def gpt(url, html, text, image):
             Displaying fake security warnings
             URL:
             {url}
-            HTML:{html}Text extracted using OCR:{text}
+            Text extracted using OCR:{text}
             ScreenShot image:
             """
             },
@@ -127,7 +126,10 @@ async def scrape(url_item: URLItem, request: Request):
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
         try:
-            await page.goto(url)
+            response = await page.goto(url)
+            status_code = response.status
+            if status_code < 200 or status_code >= 400:
+                return {"Error": f"Failed to load the page. Status code: {status_code}"}, 500
         except:
             return {"Error": "Failed to load the page"}, 500
         
@@ -153,10 +155,6 @@ async def scrape(url_item: URLItem, request: Request):
             image_resize(screenshot_path, 40)
         except Exception as e:
             return {"Error": f"Failed to resize image: {str(e)}"}, 500
-        # scheme = request.url.scheme  # http or https
-        # host = request.url.hostname  # example.com
-        # port = request.url.port
-        # screenshot_path = f"{scheme}://{host}:{port}/{screenshot_path}"
         
         image_path = screenshot_path
         destination_blob_name = screenshot_path
@@ -181,7 +179,5 @@ async def scrape(url_item: URLItem, request: Request):
     
     return {
         "gpt_response": gpt_output,
-        "html_content": html_content,
-        "text_content": text_content,
         "downloadable_screenshot_path": screenshot_path
     }
